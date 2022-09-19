@@ -12,7 +12,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
 
 struct Node{
     int key;
@@ -86,7 +85,7 @@ void insert(struct Node* head, int pos, int k){
     }
 
     if (i < pos) {
-        printf("pos exceeds the boundaries of linked list!\n");
+        printf("Index exceeds the boundaries of linked list!\n");
         return;
     }
 
@@ -114,20 +113,59 @@ void prepend(struct Node* head, int k){
 */
 void delete(struct Node* head, int n){
 
-    struct Node *node_to_be_deleted = find(head, n);
+    struct Node *del = find(head, n);
 
-    if (node_to_be_deleted == NULL){
-        printf("The node with position n does not exist!\n");
+    if (del == NULL){
+        printf("The node with position %d does not exist!\n", n);
         return;
     }
 
-    struct Node *current = head;
-    while(current->next != node_to_be_deleted){
+    /* base case */
+    if (head == NULL || del == NULL)
+        return;
+ 
+    /* If node to be deleted is head node */
+    if (head == del)
+        head = del->next;
+ 
+    /* Change next only if node to be deleted is NOT the last node */
+    if (del->next != NULL)
+        del->next->prev = del->prev;
+ 
+    /* Change prev only if node to be deleted is NOT the first node */
+    if (del->prev != NULL)
+        del->prev->next = del->next;
+ 
+    /* Finally, free the memory occupied by del*/
+    free(del);
+
+    // struct Node *current = head;
+    // while(current->next != node_to_be_deleted){
+    //     current = current->next;
+    // }
+
+    // current->next = current->next->next;
+    // node_to_be_deleted->next = NULL;
+}
+
+/* 
+* Search for a value k. 
+* If value exists, it outputs its position index. Otherwise it returns -1.
+* head - pointer to the head of linked list
+*/
+int findValue(struct Node* head, int k) {
+    struct Node *current = head->next;
+    int i = 0;
+    while(current != NULL && current->key != k) {
         current = current->next;
+        i++;
+    }
+    if(current == NULL) {
+        return -1;
+    } else {
+        return i;
     }
 
-    current->next = current->next->next;
-    node_to_be_deleted->next = NULL;
 }
 
 /*
@@ -137,72 +175,111 @@ void delete(struct Node* head, int n){
 * m - index of the second node
 */
 void swap(struct Node* head, int n, int m){
-    struct Node *node_n = find(head, n);
-    if (node_n == NULL) {
-        printf("Warning: n exceeds the boundaries of linked list\n");
-        return;
+
+    if (head == NULL || head->next == NULL || n == m) return;
+ 
+    struct Node* Node1 = find(head, n);
+    struct Node* Node2 = find(head, m);
+    struct Node* tail = head->next;
+
+    while (tail->next != NULL){
+        tail = tail->next;
     }
 
-    struct Node *node_m = find(head, m);
-    if (node_m == NULL) {
-        printf("Warning: m exceeds the boundaries of linked list\n");
-        return;
-    }
-    
-    struct Node *current = head;
-    while(current->next != NULL) {
-        current = current->next;
-    }
+    if (Node1 == head)
+        head = Node2;
+    else if (Node2 == head)
+        head = Node1;
+    if (Node1 == tail)
+        tail = Node2;
+    else if (Node2 == tail)
+        tail = Node1;
+ 
+    // Swapping Node1 and Node2
+    struct Node* temp;
+    temp = Node1->next;
+    Node1->next = Node2->next;
+    Node2->next = temp;
+ 
+    if (Node1->next != NULL)
+        Node1->next->prev = Node1;
+    if (Node2->next != NULL)
+        Node2->next->prev = Node2;
+ 
+    temp = Node1->prev;
+    Node1->prev = Node2->prev;
+    Node2->prev = temp;
+ 
+    if (Node1->prev != NULL)
+        Node1->prev->next = Node1;
+    if (Node2->prev != NULL)
+        Node2->prev->next = Node2;
+    // struct Node *node_n = find(head, n);
+    // if (node_n == NULL) {
+    //     printf("Warning: n exceeds the boundaries of linked list\n");
+    //     return;
+    // }
 
-    struct Node* dummyNode = (struct Node*)malloc(sizeof(struct Node));
-    dummyNode->key = 0;
-    dummyNode->next = NULL;
-    current->next = dummyNode;
-    dummyNode->prev = current;
+    // struct Node *node_m = find(head, m);
+    // if (node_m == NULL) {
+    //     printf("Warning: m exceeds the boundaries of linked list\n");
+    //     return;
+    // }
     
-    
-    struct Node *tmp;
+    // struct Node *current = head;
+    // while(current->next != NULL) {
+    //     current = current->next;
+    // }
 
-    struct Node *node_pred_n = node_n->prev;
-    struct Node *node_pred_m = node_m->prev;
-    struct Node *node_suc_n = node_n->next;
-    struct Node *node_suc_m = node_m->next;
-
-    // struct Node* dummyNode;
+    // struct Node* dummyNode = (struct Node*)malloc(sizeof(struct Node));
     // dummyNode->key = 0;
     // dummyNode->next = NULL;
-    // dummyNode->prev = (node_suc_n == NULL) ? node_n : node_m;
+    // current->next = dummyNode;
+    // dummyNode->prev = current;
+    
+    
+    // struct Node *tmp;
 
-    tmp = node_pred_n->next;
-    node_pred_n->next = node_pred_m->next;
-    node_pred_m->next = tmp;
+    // struct Node *node_pred_n = node_n->prev;
+    // struct Node *node_pred_m = node_m->prev;
+    // struct Node *node_suc_n = node_n->next;
+    // struct Node *node_suc_m = node_m->next;
 
-    tmp = node_n->next;
-    node_n->next = node_m->next;
-    node_m->next = tmp;
+    // // struct Node* dummyNode;
+    // // dummyNode->key = 0;
+    // // dummyNode->next = NULL;
+    // // dummyNode->prev = (node_suc_n == NULL) ? node_n : node_m;
 
-    // if (node_suc_m == NULL) {
-    //     tmp = node_suc_n->prev;
-    //     node_suc_n->prev = dummyNode->prev;
-    //     dummyNode->prev = tmp;
-    // } else if (node_suc_n == NULL) {
-    //     tmp = dummyNode->prev;
-    //     dummyNode->prev = node_pred_m->prev;
-    //     node_pred_m->prev = tmp;
-    // }
+    // tmp = node_pred_n->next;
+    // node_pred_n->next = node_pred_m->next;
+    // node_pred_m->next = tmp;
+
+    // tmp = node_n->next;
+    // node_n->next = node_m->next;
+    // node_m->next = tmp;
+
+    // // if (node_suc_m == NULL) {
+    // //     tmp = node_suc_n->prev;
+    // //     node_suc_n->prev = dummyNode->prev;
+    // //     dummyNode->prev = tmp;
+    // // } else if (node_suc_n == NULL) {
+    // //     tmp = dummyNode->prev;
+    // //     dummyNode->prev = node_pred_m->prev;
+    // //     node_pred_m->prev = tmp;
+    // // }
+    // // dummyNode = NULL;
+
+    // tmp = node_suc_n->prev;
+    // node_suc_n->prev = node_suc_m->prev;
+    // node_suc_m->prev = tmp;
+
+    // tmp = node_n->prev;
+    // node_n->prev = node_m->prev;
+    // node_m->prev = tmp;
+
+    // dummyNode->prev->next = NULL;
+    // dummyNode->prev = NULL;
     // dummyNode = NULL;
-
-    tmp = node_suc_n->prev;
-    node_suc_n->prev = node_suc_m->prev;
-    node_suc_m->prev = tmp;
-
-    tmp = node_n->prev;
-    node_n->prev = node_m->prev;
-    node_m->prev = tmp;
-
-    dummyNode->prev->next = NULL;
-    dummyNode->prev = NULL;
-    dummyNode = NULL;
 }
 
 /*
@@ -253,26 +330,6 @@ void sort(struct Node* head){
     }
 }
 
-/* 
-* Search for a value k. 
-* If value exists, it outputs its position index. Otherwise it throws an error.
-* head - pointer to the head of linked list
-*/
-int findValue(struct Node* head, int k) {
-    struct Node *current = head->next;
-    int i = 0;
-    while(current != NULL && current->key != k) {
-        current = current->next;
-        i++;
-    }
-    if(current == NULL) {
-        printf("The value %d doesn't exist in linked list!\n", k);
-    } else {
-        printf("The value %d was found successfully!\nIt has position %d.\n", k, i);
-    }
-
-    return i;
-}
 
 /*
 * Joins two linked lists.
@@ -336,7 +393,7 @@ void writeInFile(FILE* file, struct Node* head) {
 }
 
 int main(){
-    int x;
+    int x, y;
     int k;
     int i;
     char c;
@@ -368,92 +425,131 @@ int main(){
 
     while(1) {
         printf("Select an option:\n");
-        printf("\t1. Append element\n");
-        printf("\t2. Prepend element\n");
-        printf("\t3. Reverse linked list\n");
-        printf("\t4. Add a value to the specific index\n");
-        printf("\t5. Remove by index\n");
-        printf("\t6. Remove by value\n");
-        printf("\t7. Sort linked list\n");
-        printf("\t8. Search a value\n");
-        printf("\t9. Join two linked lists\n");
-        printf("\t10. Backwards traversal\n");
-        printf("\t11. Select and exit\n");
+        printf("\t1. Display linekd list\n");
+        printf("\t2. Append element\n");
+        printf("\t3. Prepend element\n");
+        printf("\t4. Reverse linked list\n");
+        printf("\t5. Add a value to the specific index\n");
+        printf("\t6. Remove by index\n");
+        printf("\t7. Remove by value\n");
+        printf("\t8. Sort linked list\n");
+        printf("\t9. Search a value\n");
+        printf("\t10. Join two linked lists\n");
+        printf("\t11. Backwards traversal\n");
+        printf("\t12. Save and exit\n");
         printf("Your choice: ");
         scanf("%d", &k);
 
         switch(k) {
             case 1: {
-                printf("Input value to append: ");
-                scanf("%d", &x);
-                append(head, x);
+                printf("Output:\n");
+                traverse(head);
                 break;
             }
             case 2: {
-                printf("Input value to prepend: ");
+                printf("Input value to append: ");
                 scanf("%d", &x);
-                prepend(head, x);
+                append(head, x);
+                printf("Output:\n");
+                traverse(head);
                 break;
             }
             case 3: {
-                reverse(head);
+                printf("Input value to prepend: ");
+                scanf("%d", &x);
+                prepend(head, x);
+                printf("Output:\n");
                 traverse(head);
                 break;
             }
             case 4: {
-                printf("Input index: ");
-                scanf("%d", &i);
-                printf("Input value: ");
-                scanf("%d", &k);
-                insert(head, i, k);
+                reverse(head);
+                printf("Output:\n");
+                traverse(head);
                 break;
             }
             case 5: {
                 printf("Input index: ");
                 scanf("%d", &i);
-                delete(head, i);
+                printf("Input value: ");
+                scanf("%d", &k);
+                insert(head, i, k);
+                printf("Output:\n");
+                traverse(head);
                 break;
             }
             case 6: {
-                printf("Input value: ");
-                scanf("%d", &k);
-                i = findValue(head, k);
+                printf("Input index: ");
+                scanf("%d", &i);
                 delete(head, i);
+                printf("Output:\n");
+                traverse(head);
                 break;
             }
             case 7: {
-                sort(head);
-                break;
-            }
-            case 8: {
                 printf("Input value: ");
                 scanf("%d", &k);
                 i = findValue(head, k);
+                if (i == -1) {
+                    printf("The value %d doesn't exist in linked list!\n", k); 
+                    printf("Output:\n");
+                    traverse(head);
+                    break;
+                }
+                while (i != -1) {
+                    delete(head, i);
+                    i = findValue(head, k);
+                }
+                printf("Output:\n");
+                traverse(head);
+                break;
+            }
+            case 8: {
+                sort(head);
+                printf("Output:\n");
+                traverse(head);
                 break;
             }
             case 9: {
-                printf("Enter new linked list in input.txt");
-                printf("Continue? (y/n)");
+                printf("Input value: ");
+                scanf("%d", &k);
+                i = findValue(head, k);
+                if (i == -1) printf("The value %d doesn't exist in linked list!\n", k);
+                else printf("The value %d was found successfully!\nIt has position %d.\n", k, i);
+                printf("Output:\n");
+                traverse(head);
+                break;
+            }
+            case 10: {
+                printf("Enter new linked list in input.txt\n");
+                printf("Continue? (y/n) ");
                 scanf(" %c", &c);
+                FILE* ifile;
+                ifile = fopen(input, "r");
+                if (ifile == NULL || ofile == NULL) {
+                    fprintf(stderr, "Couldn't Open File'\n");
+                    exit(1);
+                }
                 while(!feof(ifile)) {
                     fscanf(ifile, "%d -- ", &x);
                     append(new_head, x);
                 }
                 fclose(ifile);
                 join(head, new_head);
-                break;
-            }
-            case 10: {
-                backwardTraversal(head);
+                printf("Output:\n");
+                traverse(head);
                 break;
             }
             case 11: {
+                backwardTraversal(head);
+                break;
+            }
+            case 12: {
+                writeInFile(ofile, head);
                 return 0;
             }
         }
         
-        printf("Output:\n");
-        traverse(head);
         printf("Do you want to continue? (y/n) ");
         scanf(" %c", &c);
         if (c == 'y') continue;
