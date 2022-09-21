@@ -1,6 +1,6 @@
 # OOP_Lab_1
 
-This is an implementation of double linked list data structure. In order to run the project, run:
+This is an implementation of double linked list data structure. In order to run the project:
 
 1. `git clone git@github.com:MaxCojocari/OOP_Lab_1.git`
 2. `cd OOP_Lab_1`
