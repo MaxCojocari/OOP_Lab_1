@@ -9,8 +9,8 @@ This is an implementation of double linked list data structure. In order to run 
 
 In this project the following API is implemented:
 
-- Input linked list from keybord and save in file
-- Read linked list from file and display
+- Input linked list from keybord and save it in a file
+- Read linked list from file and display it
 - Append element
 - Prepend element
 - Reverse linked list
