@@ -382,14 +382,23 @@ void backwardTraversal(struct Node* head) {
     printf("%d\n", current->key);
 }
 
-void writeInFile(FILE* file, struct Node* head) {
+void writeInFile(struct Node* head) {
+    FILE* ofile;
+    char output[] = "output.txt";
+    ofile = fopen(output, "w");
+    
+    if (ofile == NULL) {
+        fprintf(stderr, "Couldn't Open File'\n");
+        exit(1);
+    }
+    
     struct Node *current = head->next;
     while(current->next != NULL){
-        fprintf(file, "%d -- ", current->key);
+        fprintf(ofile, "%d -- ", current->key);
         current = current->next;
     }
-    fprintf(file, "%d ", current->key);
-    fclose(file);
+    fprintf(ofile, "%d ", current->key);
+    fclose(ofile);
 }
 
 int main(){
@@ -406,69 +415,92 @@ int main(){
     new_head->next = NULL;
     
     char input[] = "input.txt";
-    char output[] = "output.txt";
     
     FILE* ifile;
-    FILE* ofile;
-    ifile = fopen(input, "r");
-    ofile = fopen(output, "w");
-    if (ifile == NULL || ofile == NULL) {
-        fprintf(stderr, "Couldn't Open File'\n");
-        exit(1);
-    }
-
-    while(!feof(ifile)) {
-        fscanf(ifile, "%d -- ", &x);
-        append(head, x);
-    }
-    fclose(ifile);
 
     while(1) {
         printf("Select an option:\n");
-        printf("\t1. Display linekd list\n");
-        printf("\t2. Append element\n");
-        printf("\t3. Prepend element\n");
-        printf("\t4. Reverse linked list\n");
-        printf("\t5. Add a value to the specific index\n");
-        printf("\t6. Remove by index\n");
-        printf("\t7. Remove by value\n");
-        printf("\t8. Sort linked list\n");
-        printf("\t9. Search a value\n");
-        printf("\t10. Join two linked lists\n");
-        printf("\t11. Backwards traversal\n");
-        printf("\t12. Save and exit\n");
+        printf("\t1. Input linked list from keybord and save in file\n");
+        printf("\t2. Read linked list from file and display\n");
+        printf("\t3. Append element\n");
+        printf("\t4. Prepend element\n");
+        printf("\t5. Reverse linked list\n");
+        printf("\t6. Add a value to the specific index\n");
+        printf("\t7. Remove by index\n");
+        printf("\t8. Remove by value\n");
+        printf("\t9. Sort linked list\n");
+        printf("\t10. Search a value\n");
+        printf("\t11. Join two linked lists\n");
+        printf("\t12. Backwards traversal\n");
+        printf("\t13. Save and exit\n");
         printf("Your choice: ");
         scanf("%d", &k);
 
         switch(k) {
             case 1: {
+                int n;
+                if (head->next != NULL) {
+                    head->next->prev = NULL;
+                    head->next = NULL;
+                }
+                printf("Input nr elements: ");
+                scanf("%d", &n);
+                printf("Input elements (int):\n");
+                for(int i=0; i<n; ++i) {
+                    scanf("%d", &x);
+                    append(head, x);
+                }
                 printf("Output:\n");
                 traverse(head);
+                printf("Your data structure was saved successfully in output.txt!\n");
+                writeInFile(head);
                 break;
             }
             case 2: {
-                printf("Input value to append: ");
-                scanf("%d", &x);
-                append(head, x);
+                if (head->next != NULL) {
+                    head->next->prev = NULL;
+                    head->next = NULL;
+                }
+
+                ifile = fopen(input, "r");
+                if (ifile == NULL) {
+                    fprintf(stderr, "Couldn't Open File'\n");
+                    exit(1);
+                }
+                while(!feof(ifile)) {
+                    fscanf(ifile, "%d -- ", &x);
+                    append(head, x);
+                }
                 printf("Output:\n");
                 traverse(head);
                 break;
             }
             case 3: {
+                printf("Input value to append: ");
+                scanf("%d", &x);
+                append(head, x);
+                printf("Output:\n");
+                traverse(head);
+                writeInFile(head);
+                break;
+            }
+            case 4: {
                 printf("Input value to prepend: ");
                 scanf("%d", &x);
                 prepend(head, x);
                 printf("Output:\n");
                 traverse(head);
-                break;
-            }
-            case 4: {
-                reverse(head);
-                printf("Output:\n");
-                traverse(head);
+                writeInFile(head);
                 break;
             }
             case 5: {
+                reverse(head);
+                printf("Output:\n");
+                traverse(head);
+                writeInFile(head);
+                break;
+            }
+            case 6: {
                 printf("Input index: ");
                 scanf("%d", &i);
                 printf("Input value: ");
@@ -476,17 +508,19 @@ int main(){
                 insert(head, i, k);
                 printf("Output:\n");
                 traverse(head);
+                writeInFile(head);
                 break;
             }
-            case 6: {
+            case 7: {
                 printf("Input index: ");
                 scanf("%d", &i);
                 delete(head, i);
                 printf("Output:\n");
                 traverse(head);
+                writeInFile(head);
                 break;
             }
-            case 7: {
+            case 8: {
                 printf("Input value: ");
                 scanf("%d", &k);
                 i = findValue(head, k);
@@ -502,15 +536,17 @@ int main(){
                 }
                 printf("Output:\n");
                 traverse(head);
-                break;
-            }
-            case 8: {
-                sort(head);
-                printf("Output:\n");
-                traverse(head);
+                writeInFile(head);
                 break;
             }
             case 9: {
+                sort(head);
+                printf("Output:\n");
+                traverse(head);
+                writeInFile(head);
+                break;
+            }
+            case 10: {
                 printf("Input value: ");
                 scanf("%d", &k);
                 i = findValue(head, k);
@@ -518,15 +554,16 @@ int main(){
                 else printf("The value %d was found successfully!\nIt has position %d.\n", k, i);
                 printf("Output:\n");
                 traverse(head);
+                writeInFile(head);
                 break;
             }
-            case 10: {
+            case 11: {
                 printf("Enter new linked list in input.txt\n");
                 printf("Continue? (y/n) ");
                 scanf(" %c", &c);
                 FILE* ifile;
                 ifile = fopen(input, "r");
-                if (ifile == NULL || ofile == NULL) {
+                if (ifile == NULL) {
                     fprintf(stderr, "Couldn't Open File'\n");
                     exit(1);
                 }
@@ -538,14 +575,16 @@ int main(){
                 join(head, new_head);
                 printf("Output:\n");
                 traverse(head);
-                break;
-            }
-            case 11: {
-                backwardTraversal(head);
+                writeInFile(head);
                 break;
             }
             case 12: {
-                writeInFile(ofile, head);
+                backwardTraversal(head);
+                writeInFile(head);
+                break;
+            }
+            case 13: {
+                writeInFile(head);
                 return 0;
             }
         }
@@ -554,16 +593,16 @@ int main(){
         scanf(" %c", &c);
         if (c == 'y') continue;
         else if (c == 'n') {
-            printf("Do you want to save changes? (y/n) ");
+            printf("Save changes and exit? (y/n) ");
             scanf(" %c", &c);
-            if (c == 'y'){writeInFile(ofile, head);}
-            printf("Exit? (y/n) ");
-            scanf(" %c", &c);
-            if (c == 'y') return 0;
-            else continue;
+            if (c == 'y'){
+                writeInFile(head);
+                return 0;
+            }
+            return 0;
         }
     }
 
-    fclose(ofile);
+    fclose(ifile);
     return 0;
 }
