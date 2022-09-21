@@ -138,14 +138,6 @@ void delete(struct Node* head, int n){
  
     /* Finally, free the memory occupied by del*/
     free(del);
-
-    // struct Node *current = head;
-    // while(current->next != node_to_be_deleted){
-    //     current = current->next;
-    // }
-
-    // current->next = current->next->next;
-    // node_to_be_deleted->next = NULL;
 }
 
 /* 
@@ -214,72 +206,6 @@ void swap(struct Node* head, int n, int m){
         Node1->prev->next = Node1;
     if (Node2->prev != NULL)
         Node2->prev->next = Node2;
-    // struct Node *node_n = find(head, n);
-    // if (node_n == NULL) {
-    //     printf("Warning: n exceeds the boundaries of linked list\n");
-    //     return;
-    // }
-
-    // struct Node *node_m = find(head, m);
-    // if (node_m == NULL) {
-    //     printf("Warning: m exceeds the boundaries of linked list\n");
-    //     return;
-    // }
-    
-    // struct Node *current = head;
-    // while(current->next != NULL) {
-    //     current = current->next;
-    // }
-
-    // struct Node* dummyNode = (struct Node*)malloc(sizeof(struct Node));
-    // dummyNode->key = 0;
-    // dummyNode->next = NULL;
-    // current->next = dummyNode;
-    // dummyNode->prev = current;
-    
-    
-    // struct Node *tmp;
-
-    // struct Node *node_pred_n = node_n->prev;
-    // struct Node *node_pred_m = node_m->prev;
-    // struct Node *node_suc_n = node_n->next;
-    // struct Node *node_suc_m = node_m->next;
-
-    // // struct Node* dummyNode;
-    // // dummyNode->key = 0;
-    // // dummyNode->next = NULL;
-    // // dummyNode->prev = (node_suc_n == NULL) ? node_n : node_m;
-
-    // tmp = node_pred_n->next;
-    // node_pred_n->next = node_pred_m->next;
-    // node_pred_m->next = tmp;
-
-    // tmp = node_n->next;
-    // node_n->next = node_m->next;
-    // node_m->next = tmp;
-
-    // // if (node_suc_m == NULL) {
-    // //     tmp = node_suc_n->prev;
-    // //     node_suc_n->prev = dummyNode->prev;
-    // //     dummyNode->prev = tmp;
-    // // } else if (node_suc_n == NULL) {
-    // //     tmp = dummyNode->prev;
-    // //     dummyNode->prev = node_pred_m->prev;
-    // //     node_pred_m->prev = tmp;
-    // // }
-    // // dummyNode = NULL;
-
-    // tmp = node_suc_n->prev;
-    // node_suc_n->prev = node_suc_m->prev;
-    // node_suc_m->prev = tmp;
-
-    // tmp = node_n->prev;
-    // node_n->prev = node_m->prev;
-    // node_m->prev = tmp;
-
-    // dummyNode->prev->next = NULL;
-    // dummyNode->prev = NULL;
-    // dummyNode = NULL;
 }
 
 /*
